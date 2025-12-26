@@ -1,0 +1,8 @@
+{
+  "name": "**TOOSDAQ2",
+  "description": "A sophisticated creator investment platform inspired by Naver Stock, featuring real-time charts, order books (Hoga), and 'Gang-naeng-i' based trading for creators.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
