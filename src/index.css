@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
+
+/* ── Theme variables ── */
+:root {
+  /* ── light (도네이터 스타일) ── */
+  --bg:         #F5F3FF;
+  --surface:    #FFFFFF;
+  --raised:     #EDE9FF;
+  --line:       rgba(108,99,255,0.1);
+
+  --blue:       #7B66FF;
+  --blue-hover: #6451EE;
+  --purple-light: rgba(123,102,255,0.1);
+  --purple-grad:  linear-gradient(135deg, #7B66FF 0%, #A855F7 100%);
+
+  --up:         #FF4D6A;
+  --down:       #3182F6;
+
+  --t1:         #1A1336;
+  --t2:         #6E6B8A;
+  --t3:         #B4B9D4;
+
+  --hover-bg:   rgba(123,102,255,0.06);
+  --chart-grid: rgba(0,0,0,0.04);
+  --shadow:     0 4px 24px rgba(108,99,255,0.12), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-sm:  0 2px 12px rgba(108,99,255,0.08);
+
+  --badge-up-bg:   rgba(255,77,106,0.1);
+  --badge-dn-bg:   rgba(49,130,246,0.1);
+  --badge-fl-bg:   rgba(110,107,138,0.1);
+  --scrollbar:  rgba(123,102,255,0.2);
+}
+
+[data-theme="dark"] {
+  --bg:         #100F1C;
+  --surface:    #1E1B30;
+  --raised:     #2A2744;
+  --line:       rgba(255,255,255,0.07);
+
+  --blue:       #9B8FFF;
+  --blue-hover: #B0A6FF;
+  --purple-light: rgba(155,143,255,0.12);
+  --purple-grad:  linear-gradient(135deg, #7B66FF 0%, #A855F7 100%);
+
+  --up:         #FF4D6A;
+  --down:       #5B9CF6;
+
+  --t1:         #F0EEFF;
+  --t2:         #8E8BA8;
+  --t3:         #4A4769;
+
+  --hover-bg:   rgba(155,143,255,0.08);
+  --chart-grid: rgba(255,255,255,0.05);
+  --shadow:     0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-sm:  0 2px 12px rgba(0,0,0,0.3);
+
+  --badge-up-bg:   rgba(255,77,106,0.14);
+  --badge-dn-bg:   rgba(91,156,246,0.14);
+  --badge-fl-bg:   rgba(142,139,168,0.14);
+  --scrollbar:  rgba(155,143,255,0.2);
+}
+
+/* ── Base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: 'Noto Sans KR', 'Pretendard', -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background .25s, color .25s;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  transition: background .25s, box-shadow .25s;
+}
+.card-raised {
+  background: var(--raised);
+  border-radius: 16px;
+  transition: background .25s;
+}
+
+/* ── Gradient hero card (도네이터 VIP 카드 스타일) ── */
+.card-hero {
+  background: var(--purple-grad);
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(123,102,255,0.35);
+}
+
+/* ── Hover row ── */
+.hover-row {
+  cursor: pointer;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin: 0 -12px;
+  transition: background .12s;
+}
+.hover-row:hover { background: var(--hover-bg); }
+
+/* ── Row divider ── */
+.row-divider + .row-divider { border-top: 1px solid var(--line); }
+
+/* ── Badges ── */
+.badge-up {
+  background: var(--badge-up-bg);
+  color: var(--up);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 9px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.badge-down {
+  background: var(--badge-dn-bg);
+  color: var(--down);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 9px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.badge-flat {
+  background: var(--badge-fl-bg);
+  color: var(--t2);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 9px;
+}
+
+/* legacy */
+.gain-text { color: var(--up); }
+.loss-text { color: var(--down); }
+.neutral-text { color: var(--t2); }
+
+/* ── Live dot ── */
+.live {
+  display: inline-block; width: 5px; height: 5px;
+  border-radius: 50%; background: #4CD964;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── Pulse (미체결 dot) ── */
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,77,106,0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(255,77,106,0); }
+}
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--t1);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: var(--shadow-sm);
+  transition: background .2s, transform .15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover { transform: scale(1.1); }
+
+/* ── Fade-in ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.fade-in { animation: fadeUp .22s ease-out both; }
+
+/* ── Pill button ── */
+.btn-pill {
+  border-radius: 999px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+}
+.btn-pill:hover { opacity: .88; transform: translateY(-1px); }
+.btn-pill:active { transform: translateY(0); opacity: .95; }
+
+/* ── Recharts ── */
+.recharts-tooltip-wrapper { outline: none !important; }
+.recharts-cartesian-grid-horizontal line { stroke: var(--chart-grid); }
+
+/* ── Quick action icon buttons (도네이터 빠른 메뉴) ── */
+.quick-action {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 16px;
+  transition: background .15s;
+}
+.quick-action:hover { background: var(--hover-bg); }
+.quick-action .icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  background: var(--purple-light);
+}
+.quick-action span {
+  font-size: 12px; font-weight: 600; color: var(--t2);
+}
+
+/* ── Circle icon (거래내역 타입 아이콘) ── */
+.circle-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Segmented control ── */
+.seg-ctrl {
+  display: flex;
+  background: var(--raised);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+}
+.seg-ctrl button {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.seg-ctrl button.active {
+  background: var(--surface);
+  color: var(--blue);
+  box-shadow: 0 2px 8px rgba(123,102,255,0.15);
+}
+.seg-ctrl button:not(.active) {
+  background: transparent;
+  color: var(--t3);
+}
+
+/* ── Legacy Tailwind component classes ── */
+@layer components {
+  .btn-primary  { @apply font-bold px-4 py-2.5 text-sm transition-all duration-150; background: var(--blue); color: #fff; border-radius: 999px; border: none; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-gain     { @apply font-bold px-4 py-2.5 text-sm; background: var(--up);   color: #fff; border-radius: 999px; border: none; }
+  .btn-loss     { @apply font-bold px-4 py-2.5 text-sm; background: var(--down); color: #fff; border-radius: 999px; border: none; }
+  .stat-label   { font-size: 12px; color: var(--t2); }
+  .stat-value   { font-weight: 600; color: var(--t1); }
+}
