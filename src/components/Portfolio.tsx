@@ -26,17 +26,6 @@ function Spark({ creator }: { creator: Creator }) {
   );
 }
 
-function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
-  return (
-    <div className="card" style={{ padding: '18px 20px' }}>
-      <div style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 8 }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: color ?? 'var(--t1)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.5px' }}>
-        {value}
-      </div>
-      {sub && <div style={{ fontSize: 12, color: color ?? 'var(--t2)', marginTop: 4, fontWeight: 600 }}>{sub}</div>}
-    </div>
-  );
-}
 
 export default function Portfolio({ creators, holdings, balance, dividends, orders, onOpenTrade, onClaimDividend, onCancelOrder }: Props) {
 
@@ -54,14 +43,11 @@ export default function Portfolio({ creators, holdings, balance, dividends, orde
   const totalInv     = details.reduce((s, h) => s + h.inv, 0);
   const totalCur     = details.reduce((s, h) => s + h.cur, 0);
   const totalPnl     = totalCur - totalInv;
-  const totalPct     = totalInv > 0 ? (totalPnl / totalInv) * 100 : 0;
   const totalDiv     = dividends.reduce((s, d) => s + d.amount, 0);
   const totalAss     = balance + totalCur;
   const weeklyDivSum = details.reduce((s, h) => s + h.weeklyDiv, 0);
 
-  const pnlColor = totalPnl >= 0 ? 'var(--up)' : 'var(--down)';
   const pnlSign  = totalPnl >= 0 ? '+' : '';
-  const pnlArrow = totalPnl >= 0 ? '▲' : '▼';
 
   const pendingOrders  = orders.filter(o => o.status === 'pending');
   const recentOrders   = orders.filter(o => o.status !== 'pending').slice(0, 10);

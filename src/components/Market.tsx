@@ -3,7 +3,7 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line,
 } from 'recharts';
 import { Creator, Holding } from '../types';
-import { TOOSDAQ_INDEX_HISTORY, calcAnnualYield, calcDividendPerShare } from '../data/creators';
+import { TOOSDAQ_INDEX_HISTORY, calcAnnualYield } from '../data/creators';
 
 interface Props {
   creators: Creator[];
