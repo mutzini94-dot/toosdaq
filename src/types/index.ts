@@ -75,7 +75,7 @@ export interface Order {
   filledPrice?: number;
 }
 
-export type TabId = 'market' | 'portfolio' | 'ranking' | 'history';
+export type TabId = 'market' | 'portfolio' | 'orders' | 'ranking' | 'history';
 
 export interface AppState {
   balance: number;

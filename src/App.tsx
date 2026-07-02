@@ -7,6 +7,12 @@ import Portfolio from './components/Portfolio';
 import Ranking from './components/Ranking';
 import TradeModal from './components/TradeModal';
 import TransactionHistory from './components/TransactionHistory';
+import Orders from './components/Orders';
+
+interface FillToast {
+  id: string;
+  order: Order;
+}
 
 type Action =
   | { type: 'PLACE_ORDER'; order: Order }
@@ -105,6 +111,7 @@ const initialState: AppState = {
 const TABS: { id: TabId; label: string }[] = [
   { id: 'market',    label: '시장'      },
   { id: 'portfolio', label: '포트폴리오' },
+  { id: 'orders',    label: '주문현황'  },
   { id: 'ranking',   label: '랭킹'      },
   { id: 'history',   label: '거래내역'  },
 ];
@@ -193,6 +200,29 @@ export default function App() {
   const [tradeResult, setTradeResult] = useState<{
     type: 'buy' | 'sell'; creator: Creator; quantity: number; price: number; orderType: 'market' | 'limit';
   } | null>(null);
+
+  // 체결 토스트 알림
+  const [fillToasts, setFillToasts] = useState<FillToast[]>([]);
+  const prevOrderStatusRef = useRef<Record<string, Order['status']>>({});
+
+  useEffect(() => {
+    const newFills: Order[] = [];
+    state.orders.forEach(o => {
+      const prev = prevOrderStatusRef.current[o.id];
+      if (prev === 'pending' && o.status === 'filled') {
+        newFills.push(o);
+      }
+      prevOrderStatusRef.current[o.id] = o.status;
+    });
+    if (newFills.length === 0) return;
+    const toasts: FillToast[] = newFills.map(o => ({ id: `toast-${o.id}`, order: o }));
+    setFillToasts(prev => [...toasts, ...prev]);
+    toasts.forEach(t => {
+      setTimeout(() => {
+        setFillToasts(prev => prev.filter(x => x.id !== t.id));
+      }, 4000);
+    });
+  }, [state.orders]);
 
   const claimDividend = useCallback(() => {
     state.holdings.forEach(h => {
@@ -321,7 +351,7 @@ export default function App() {
                 onMouseLeave={e => { if (tab !== t.id) (e.currentTarget as HTMLElement).style.color = 'var(--t3)'; }}
               >
                 {t.label}
-                {t.id === 'portfolio' && pendingCount > 0 && (
+                {(t.id === 'portfolio' || t.id === 'orders') && pendingCount > 0 && (
                   <span style={{
                     position: 'absolute', top: 5, right: 4,
                     minWidth: 16, height: 16, borderRadius: 999,
@@ -343,6 +373,7 @@ export default function App() {
       <main style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 20px' }}>
         {tab === 'market'    && <Market    creators={creatorsData} holdings={state.holdings} onOpenTrade={openTrade} livePrices={livePrices} />}
         {tab === 'portfolio' && <Portfolio creators={creatorsData} holdings={state.holdings} balance={state.balance} dividends={state.dividends} orders={state.orders} onOpenTrade={openTrade} onClaimDividend={claimDividend} onCancelOrder={cancelOrder} />}
+        {tab === 'orders'    && <Orders    orders={state.orders} onCancelOrder={cancelOrder} />}
         {tab === 'ranking'   && <Ranking   creators={creatorsData} onOpenTrade={openTrade} />}
         {tab === 'history'   && <TransactionHistory transactions={state.transactions} dividends={state.dividends} />}
       </main>
@@ -359,6 +390,59 @@ export default function App() {
       {tradeResult && (
         <OrderResultModal result={tradeResult} onClose={closeResult} onGoPortfolio={goPortfolio} />
       )}
+
+      {/* ── 체결 토스트 알림 ── */}
+      <div style={{
+        position: 'fixed', top: 80, right: 20, zIndex: 100,
+        display: 'flex', flexDirection: 'column', gap: 10,
+        pointerEvents: 'none',
+      }}>
+        {fillToasts.map(t => {
+          const isBuy = t.order.type === 'buy';
+          const typeColor = isBuy ? 'var(--up)' : 'var(--down)';
+          return (
+            <div key={t.id} className="fade-in" style={{
+              background: 'var(--surface)',
+              borderRadius: 18,
+              padding: '14px 18px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+              border: `1.5px solid ${isBuy ? 'rgba(255,77,106,0.3)' : 'rgba(49,130,246,0.3)'}`,
+              minWidth: 240, maxWidth: 300,
+              display: 'flex', alignItems: 'center', gap: 12,
+              pointerEvents: 'auto',
+            }}>
+              {/* 아이콘 */}
+              <div style={{
+                width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+                background: isBuy ? 'rgba(255,77,106,0.1)' : 'rgba(49,130,246,0.1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 20,
+              }}>
+                {isBuy ? '📈' : '📉'}
+              </div>
+              {/* 텍스트 */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, color: typeColor, fontWeight: 800, marginBottom: 2 }}>
+                  {isBuy ? '매수 체결' : '매도 체결'} 완료!
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--t1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {t.order.creatorEmoji} {t.order.creatorName}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--t2)', marginTop: 1, fontVariantNumeric: 'tabular-nums' }}>
+                  {t.order.quantity}주 · {(t.order.filledPrice ?? t.order.limitPrice).toLocaleString()} 🌽
+                </div>
+              </div>
+              {/* 닫기 */}
+              <button
+                onClick={() => setFillToasts(prev => prev.filter(x => x.id !== t.id))}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t3)', fontSize: 16, padding: 4, flexShrink: 0 }}
+              >
+                ✕
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
