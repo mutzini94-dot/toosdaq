@@ -55,39 +55,44 @@ export default function Portfolio({ creators, holdings, balance, dividends, orde
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-      {/* ── 히어로 자산 카드 (도네이터 VIP 카드 스타일) ── */}
-      <div className="card-hero" style={{ padding: '28px 28px 24px', position: 'relative', overflow: 'hidden' }}>
-        {/* 배경 데코 원 */}
-        <div style={{ position: 'absolute', top: -30, right: -30, width: 160, height: 160, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -20, right: 80, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
-
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: 500, marginBottom: 6 }}>나의 누적 강냉이</div>
-        <div style={{ fontSize: 38, fontWeight: 900, color: '#fff', fontVariantNumeric: 'tabular-nums', letterSpacing: '-1px', lineHeight: 1 }}>
-          {totalAss.toLocaleString()} <span style={{ fontSize: 18 }}>🌽</span>
-        </div>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 6 }}>
-          총 {details.length}개 종목 보유
-        </div>
-
-        {/* 하단 통계 */}
-        <div style={{ display: 'flex', gap: 0, marginTop: 20, background: 'rgba(255,255,255,0.12)', borderRadius: 14, overflow: 'hidden' }}>
-          {[
-            { label: '보유 현금',  val: balance.toLocaleString() },
-            { label: '평가금액',   val: totalCur.toLocaleString() },
-            { label: '평가손익',   val: `${pnlSign}${totalPnl.toLocaleString()}`, color: totalPnl >= 0 ? '#FFB3BE' : '#A8CFFF' },
-          ].map((s, i) => (
-            <div key={s.label} style={{ flex: 1, padding: '12px 14px', borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.12)' : 'none' }}>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', marginBottom: 4, fontWeight: 500 }}>{s.label}</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: s.color ?? '#fff', fontVariantNumeric: 'tabular-nums' }}>{s.val}</div>
+      {/* ── 히어로 자산 카드 — Fluid Capital 스타일 ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+        {/* 총 자산 */}
+        <div className="card" style={{ gridColumn: '1 / -1', padding: '24px 28px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 13, color: 'var(--t3)', fontWeight: 500, marginBottom: 8 }}>포트폴리오 총 자산</div>
+              <div style={{ fontSize: 40, fontWeight: 800, color: 'var(--t1)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-1.5px', lineHeight: 1 }}>
+                {totalAss.toLocaleString()}
+                <span style={{ fontSize: 20, marginLeft: 6, color: 'var(--t3)' }}>🌽</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+                <span className={totalPnl >= 0 ? 'badge-up' : 'badge-down'} style={{ fontSize: 12, padding: '4px 10px' }}>
+                  {totalPnl >= 0 ? '▲' : '▼'} {pnlSign}{Math.abs(totalPnl).toLocaleString()}
+                </span>
+                <span style={{ fontSize: 12, color: 'var(--t3)' }}>총 {details.length}개 종목 보유</span>
+              </div>
             </div>
-          ))}
+            <div style={{ display: 'flex', gap: 24, flexShrink: 0 }}>
+              {[
+                { label: '보유 현금',  val: balance.toLocaleString(), color: 'var(--t1)' },
+                { label: '평가금액',   val: totalCur.toLocaleString(), color: 'var(--t1)' },
+                { label: '배당 수령',  val: `+${totalDiv.toLocaleString()}`, color: 'var(--blue)' },
+              ].map(s => (
+                <div key={s.label} style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 11, color: 'var(--t3)', marginBottom: 4, fontWeight: 500 }}>{s.label}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: s.color, fontVariantNumeric: 'tabular-nums' }}>{s.val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* ── 배당 수령 카드 ── */}
       {holdings.length > 0 && (
         <div className="card" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'var(--purple-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'var(--blue-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>
             💰
           </div>
           <div style={{ flex: 1 }}>
@@ -100,16 +105,10 @@ export default function Portfolio({ creators, holdings, balance, dividends, orde
               +{weeklyDivSum.toLocaleString()} 🌽
             </div>
           </div>
-          <button onClick={onClaimDividend} style={{
-            background: 'var(--purple-grad)', color: '#fff',
-            border: 'none', borderRadius: 999, padding: '11px 22px',
-            fontSize: 14, fontWeight: 700, cursor: 'pointer', flexShrink: 0,
-            boxShadow: '0 4px 14px rgba(123,102,255,0.35)',
-            transition: 'opacity .15s, transform .1s',
-          }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.opacity = '0.88'; el.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.opacity = '1'; el.style.transform = ''; }}
-          >
+          <button onClick={onClaimDividend} className="btn-primary" style={{
+            borderRadius: 12, padding: '11px 22px',
+            flexShrink: 0, boxShadow: '0 4px 14px rgba(0,100,255,0.25)',
+          }}>
             수령하기
           </button>
         </div>
@@ -261,7 +260,7 @@ export default function Portfolio({ creators, holdings, balance, dividends, orde
                         <div style={{ fontSize: 10, color: 'var(--t3)', marginTop: 2 }}>🌽/주</div>
                       </td>
                       <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-block', background: 'rgba(123,102,255,0.1)', color: 'var(--blue)', borderRadius: 6, padding: '3px 8px', fontSize: 12, fontWeight: 700 }}>
+                        <div style={{ display: 'inline-block', background: 'var(--blue-light)', color: 'var(--blue)', borderRadius: 6, padding: '3px 8px', fontSize: 12, fontWeight: 700 }}>
                           {h.annualYield.toFixed(1)}%
                         </div>
                       </td>

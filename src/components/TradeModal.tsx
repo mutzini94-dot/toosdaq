@@ -110,12 +110,12 @@ export default function TradeModal({ creator, tradeType, balance, holding, onTra
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(26,19,54,0.6)', backdropFilter: 'blur(8px)' }} onClick={onClose} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(8px)' }} onClick={onClose} />
 
       <div className="fade-in" style={{
-        position: 'relative', background: 'var(--surface)', borderRadius: '28px 28px 0 0',
+        position: 'relative', background: 'var(--surface)', borderRadius: '24px 24px 0 0',
         width: '100%', maxWidth: 600, maxHeight: '92vh', overflowY: 'auto',
-        boxShadow: '0 -8px 40px rgba(123,102,255,0.2)',
+        boxShadow: '0 -8px 40px rgba(0,0,0,0.12)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '12px 24px 0' }}>
           <div style={{ width: 36, height: 4, background: 'var(--raised)', borderRadius: 99 }} />
